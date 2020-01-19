@@ -1,0 +1,1 @@
+A Gradle plugin that adds additional metadata to all releases of the https://github.com/google/guava[Google Guava] library.
