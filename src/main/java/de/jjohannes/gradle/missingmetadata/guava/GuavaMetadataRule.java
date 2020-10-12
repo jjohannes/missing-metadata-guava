@@ -29,7 +29,7 @@ class GuavaMetadataRule implements ComponentMetadataRule {
     public void execute(ComponentMetadataContext ctx) {
         int majorVersion = getMajorVersion(ctx.getDetails());
         int minorVersion = getMinorVersion(ctx.getDetails());
-        if (majorVersion > 28 || (majorVersion == 28 && minorVersion > 2)) {
+        if (majorVersion > 29 || (majorVersion == 29 && minorVersion > 0)) {
             return;
         }
 
@@ -104,9 +104,8 @@ class GuavaMetadataRule implements ComponentMetadataRule {
                 "22.0".equals(version) || "23.0".equals(version) ? "" : "-jre" : "-android";
         int otherJdkVersion = isAndroidVariantVersion(details) ? 8 : 6;
 
-        details.withVariant(baseVariantName.toLowerCase(), variant -> {
-            variant.attributes(a -> a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, jdkVersion));
-        });
+        details.withVariant(baseVariantName.toLowerCase(), variant ->
+                variant.attributes(a -> a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, jdkVersion)));
         details.addVariant("jdk" + otherJdkVersion + baseVariantName, baseVariantName.toLowerCase(), variant -> {
             variant.attributes(a -> a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, otherJdkVersion));
             if (majorVersion >= 26 || "25.1".equals(version)) {
@@ -131,13 +130,15 @@ class GuavaMetadataRule implements ComponentMetadataRule {
         if (androidVariant) {
             if (guavaVersion.equals("25.1")) {
                 version = "2.0.0";
-            } else if (guavaVersion.startsWith("28.")) {
+            } else if (guavaVersion.startsWith("28.") || guavaVersion.startsWith("29.")) {
                 version = "2.5.5";
             } else {
                 version = "2.5.2";
             }
         } else {
-            if (guavaVersion.equals("28.2")) {
+            if (guavaVersion.startsWith("29.")) {
+                version = "2.11.1";
+            } else if (guavaVersion.equals("28.2")) {
                 version = "2.10.0";
             } else if (guavaVersion.startsWith("28.")) {
                 version = "2.8.1";
