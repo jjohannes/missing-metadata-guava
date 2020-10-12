@@ -16,6 +16,7 @@
 
 plugins {
     `java-gradle-plugin`
+    `maven-publish`
     groovy
     id("com.gradle.plugin-publish") version "0.10.1"
     id("com.github.hierynomus.license") version "0.15.0"
@@ -33,15 +34,14 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
-val functionalTestSourceSet = sourceSets.create("functionalTest") { }
-gradlePlugin.testSourceSets(functionalTestSourceSet)
-configurations.getByName("functionalTestImplementation").extendsFrom(configurations.getByName("testImplementation"))
-val functionalTest by tasks.creating(Test::class) {
-    testClassesDirs = functionalTestSourceSet.output.classesDirs
-    classpath = functionalTestSourceSet.runtimeClasspath
+val functionalTest: SourceSet by sourceSets.creating
+gradlePlugin.testSourceSets(functionalTest)
+val functionalTestTask = tasks.register<Test>("functionalTest") {
+    testClassesDirs = functionalTest.output.classesDirs
+    classpath = functionalTest.runtimeClasspath
 }
-val check by tasks.getting(Task::class) {
-    dependsOn(functionalTest)
+tasks.check {
+    dependsOn(functionalTestTask)
 }
 
 dependencies {
@@ -64,12 +64,6 @@ pluginBundle {
     website = "https://github.com/jjohannes/missing-metadata-guava"
     vcsUrl = "https://github.com/jjohannes/missing-metadata-guava.git"
     tags = listOf("dependency", "dependencies", "dependency-management", "metadata", "guava")
-
-    mavenCoordinates {
-        groupId = project.group.toString()
-        artifactId = project.name
-        version = project.version.toString()
-    }
 }
 
 license {
@@ -86,4 +80,3 @@ license {
     exclude("**/build/*")
     exclude("**/.gradle/*")
 }
-
