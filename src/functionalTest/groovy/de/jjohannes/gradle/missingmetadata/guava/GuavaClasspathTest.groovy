@@ -32,12 +32,14 @@ class GuavaClasspathTest extends Specification {
         testFolder.newFile('settings.gradle.kts') << 'rootProject.name = "test-project"'
     }
 
-    String nextGuavaVersion = '28.3'
+    String nextGuavaVersion = '30.0'
 
     static allGuavaVersions() {
         [
-                ['28.3'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.11.1', failureaccess: '1.0.1']],
-                ['28.3'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.11.1', failureaccess: '1.0.1']],
+                ['30.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['30.0'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['29.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.11.1', failureaccess: '1.0.1']],
+                ['29.0'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.11.1', failureaccess: '1.0.1']],
                 ['28.2'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.10.0', failureaccess: '1.0.1']],
                 ['28.2'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.10.0', failureaccess: '1.0.1']],
                 ['28.1'  , 'jre'    , [errorProne:  '2.3.2', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker:  '2.8.1', failureaccess: '1.0.1']],
@@ -118,7 +120,7 @@ class GuavaClasspathTest extends Specification {
         testFolder.newFile("build.gradle.kts") << """
             plugins {
                 `java-library`
-                id("de.jjohannes.missing-metadata.guava")
+                id("de.jjohannes.missing-metadata-guava")
             }
 
             repositories {
@@ -202,7 +204,7 @@ class GuavaClasspathTest extends Specification {
     void buildNextGuavaVersion() {
         def guavaDir = new File('build/guava')
         if (!guavaDir.exists()) {
-            print "git clone --depth 1 https://github.com/jjohannes/guava.git -b gradle-module-metadata".execute().text
+            print "git clone --depth 1 https://github.com/jjohannes/guava.git -b gradle-module-metadata".execute(null, guavaDir.parentFile).text
             print "util/set_version.sh $nextGuavaVersion".execute(null, guavaDir).text
             print "mvn clean install -DskipTests".execute(null, guavaDir).text
             print "mvn clean install -DskipTests".execute(null, new File(guavaDir, 'android')).text
