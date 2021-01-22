@@ -18,7 +18,7 @@ package de.jjohannes.gradle.missingmetadata.guava;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
-class GuavaMetadataPlugin implements Plugin<Project> {
+public class GuavaMetadataPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
