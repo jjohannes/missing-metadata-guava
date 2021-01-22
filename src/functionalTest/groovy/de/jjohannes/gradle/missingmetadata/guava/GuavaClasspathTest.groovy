@@ -32,10 +32,14 @@ class GuavaClasspathTest extends Specification {
         testFolder.newFile('settings.gradle.kts') << 'rootProject.name = "test-project"'
     }
 
-    String nextGuavaVersion = '30.0'
+    String nextGuavaVersion = '31.0'
 
     static allGuavaVersions() {
         [
+                ['31.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['31.0'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['30.1'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['30.1'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
                 ['30.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
                 ['30.0'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
                 ['29.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '2.11.1', failureaccess: '1.0.1']],
@@ -153,22 +157,22 @@ class GuavaClasspathTest extends Specification {
         [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations()
     }
 
-    static Set<String> expectedClasspath(String guavaVersion, int javaVersion, String classpath, Map<String, String> dependencyVersions) {
+    Set<String> expectedClasspath(String guavaVersion, int javaVersion, String classpath, Map<String, String> dependencyVersions) {
         int majorGuavaVersion = guavaVersion.substring(0, 2) as Integer
         String jarSuffix = majorGuavaVersion < 22 ? '' : javaVersion < 8 ? 'android' : (guavaVersion == '22.0' || guavaVersion == '23.0') ? '' : 'jre'
         Set<String> result = ["guava-${guavaVersion}${jarSuffix? '-' : ''}${jarSuffix}.jar"]
         if (dependencyVersions.failureaccess) {
             result += "failureaccess-${dependencyVersions.failureaccess}.jar"
         }
-        if (classpath == 'compileClasspath') {
+        if (classpath == 'compileClasspath' || guavaVersion == nextGuavaVersion) { // Guava itself is planing to be more conservative with reducing the runtime classpath, so 'nextGuavaVersion' has more entries right now
+            if (classpath == 'compileClasspath' && dependencyVersions.j2objc) {
+                result += "j2objc-annotations-${dependencyVersions.j2objc}.jar"
+            }
             if (dependencyVersions.jsr305) {
                 result += "jsr305-${dependencyVersions.jsr305}.jar"
             }
             if (dependencyVersions.errorProne) {
                 result += "error_prone_annotations-${dependencyVersions.errorProne}.jar"
-            }
-            if (dependencyVersions.j2objc) {
-                result += "j2objc-annotations-${dependencyVersions.j2objc}.jar"
             }
             if (dependencyVersions.checker && dependencyVersions.checkerCompat) {
                 if (javaVersion < 8) {

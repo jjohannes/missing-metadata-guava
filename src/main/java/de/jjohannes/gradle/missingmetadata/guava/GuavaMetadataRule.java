@@ -29,7 +29,7 @@ class GuavaMetadataRule implements ComponentMetadataRule {
     public void execute(ComponentMetadataContext ctx) {
         int majorVersion = getMajorVersion(ctx.getDetails());
         int minorVersion = getMinorVersion(ctx.getDetails());
-        if (majorVersion > 29 || (majorVersion == 29 && minorVersion > 0)) {
+        if (majorVersion > 30 || (majorVersion == 20 && minorVersion > 1)) {
             return;
         }
 
@@ -130,13 +130,15 @@ class GuavaMetadataRule implements ComponentMetadataRule {
         if (androidVariant) {
             if (guavaVersion.equals("25.1")) {
                 version = "2.0.0";
-            } else if (guavaVersion.startsWith("28.") || guavaVersion.startsWith("29.")) {
+            } else if (guavaVersion.startsWith("28.") || guavaVersion.startsWith("29.") || guavaVersion.startsWith("30.")) {
                 version = "2.5.5";
             } else {
                 version = "2.5.2";
             }
         } else {
-            if (guavaVersion.startsWith("29.")) {
+            if (guavaVersion.startsWith("30.")) {
+                version = "3.5.0";
+            } else if (guavaVersion.startsWith("29.")) {
                 version = "2.11.1";
             } else if (guavaVersion.equals("28.2")) {
                 version = "2.10.0";
