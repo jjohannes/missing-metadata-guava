@@ -8,7 +8,7 @@ Apply the plugin in your Gradle project:
 
 ```
 plugins {
-  id("de.jjohannes.missing-metadata-guava") version "0.3"
+  id("de.jjohannes.missing-metadata-guava") version "0.4"
 }
 ```
 
