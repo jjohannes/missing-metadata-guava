@@ -19,12 +19,15 @@ import org.gradle.api.artifacts.CacheableRule;
 import org.gradle.api.artifacts.ComponentMetadataContext;
 import org.gradle.api.artifacts.ComponentMetadataDetails;
 import org.gradle.api.artifacts.ComponentMetadataRule;
+import org.gradle.api.attributes.Attribute;
 
 import static de.jjohannes.gradle.missingmetadata.guava.GuavaCapabilities.*;
 import static org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE;
 
 @CacheableRule
 class GuavaMetadataRule implements ComponentMetadataRule {
+    private final static Attribute<String> TARGET_JVM_ENVIRONMENT_ATTRIBUTE =
+            Attribute.of("org.gradle.jvm.environment", String.class);
 
     public void execute(ComponentMetadataContext ctx) {
         int majorVersion = getMajorVersion(ctx.getDetails());
@@ -99,15 +102,22 @@ class GuavaMetadataRule implements ComponentMetadataRule {
         String version = getVersion(details);
         int majorVersion = getMajorVersion(details);
         int jdkVersion = isAndroidVariantVersion(details) ? 6 : 8;
+        String env = isAndroidVariantVersion(details) ? "android" : "standard-jvm";
 
         String otherJarSuffix = isAndroidVariantVersion(details) ?
                 "22.0".equals(version) || "23.0".equals(version) ? "" : "-jre" : "-android";
         int otherJdkVersion = isAndroidVariantVersion(details) ? 8 : 6;
+        String otherEnv = isAndroidVariantVersion(details) ? "standard-jvm" : "android";
 
-        details.withVariant(baseVariantName.toLowerCase(), variant ->
-                variant.attributes(a -> a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, jdkVersion)));
+        details.withVariant(baseVariantName.toLowerCase(), variant -> variant.attributes(a -> {
+            a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, jdkVersion);
+            a.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, env);
+        }));
         details.addVariant("jdk" + otherJdkVersion + baseVariantName, baseVariantName.toLowerCase(), variant -> {
-            variant.attributes(a -> a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, otherJdkVersion));
+            variant.attributes(a -> {
+                a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, otherJdkVersion);
+                a.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, otherEnv);
+            });
             if (majorVersion >= 26 || "25.1".equals(version)) {
                 variant.withDependencies(dependencies -> {
                     dependencies.removeIf(d -> "org.checkerframework".equals(d.getGroup()));

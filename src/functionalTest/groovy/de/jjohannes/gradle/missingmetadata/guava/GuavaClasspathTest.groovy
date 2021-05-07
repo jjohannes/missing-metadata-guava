@@ -121,7 +121,7 @@ class GuavaClasspathTest extends Specification {
     }
 
     @Unroll
-    def "has correct classpath for Guava #guavaVersion-#versionSuffix, Java#javaVersion, #classpath"() {
+    def "has correct classpath for Guava selected by target Java version #guavaVersion-#versionSuffix, Java#javaVersion, #classpath"() {
         given:
         testFolder.newFile("build.gradle.kts") << """
             plugins {
@@ -137,6 +137,50 @@ class GuavaClasspathTest extends Specification {
             java {
                 targetCompatibility = JavaVersion.VERSION_1_$javaVersion
                 sourceCompatibility = JavaVersion.VERSION_1_$javaVersion
+            }
+
+            dependencies {
+                api("com.google.collections:google-collections:1.0")
+                api("com.google.guava:listenablefuture:1.0")
+                api("com.google.guava:guava:$guavaVersion${versionSuffix ? '-' : ''}$versionSuffix")
+            }
+
+            tasks.register("printJars") {
+                doLast {
+                    configurations.${classpath}.files.forEach { println(it.name) }
+                }
+            }
+        """
+
+        expect:
+        expectedClasspath(guavaVersion, javaVersion, classpath, dependencyVersions) == buildClasspath()
+
+        where:
+        [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations(true)
+    }
+
+    @Unroll
+    def "has correct classpath for Guava selected by target environment version #guavaVersion-#versionSuffix, Java#javaVersion, #classpath"() {
+        given:
+        testFolder.newFile("build.gradle.kts") << """
+            plugins {
+                `java-library`
+                id("de.jjohannes.missing-metadata-guava")
+            }
+
+            repositories {
+                mavenCentral()
+                ${guavaVersion == nextGuavaVersion? 'mavenLocal()' : ''}
+            }
+
+            // emulate what Gradle 7+ and AGP 7+ are doing
+            val TARGET_JVM_ENVIRONMENT_ATTRIBUTE = Attribute.of("org.gradle.jvm.environment", String::class.java)
+            val jvmEnv = ${javaVersion == 6 ? '"android"' : '"standard-jvm"'}
+            configurations.compileClasspath {
+                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, jvmEnv)
+            }
+            configurations.runtimeClasspath {
+                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, jvmEnv)
             }
 
             dependencies {
@@ -179,6 +223,9 @@ class GuavaClasspathTest extends Specification {
             if (dependencyVersions.checker && dependencyVersions.checkerCompat) {
                 if (javaVersion < 8) {
                     result += "checker-compat-qual-${dependencyVersions.checkerCompat}.jar"
+                    if (guavaVersion == "31.0") {
+                        result += "checker-qual-${dependencyVersions.checker}.jar"
+                    }
                 } else {
                     result += "checker-qual-${dependencyVersions.checker}.jar"
                 }
