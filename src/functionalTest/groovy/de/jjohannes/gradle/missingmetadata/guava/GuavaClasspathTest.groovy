@@ -36,8 +36,10 @@ class GuavaClasspathTest extends Specification {
 
     static allGuavaVersions() {
         [
-                ['31.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
-                ['31.0'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
+                ['31.0'  , 'jre'    , [errorProne:  '2.6.0', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.0'  , 'android', [errorProne:  '2.6.0', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['30.1.1', 'jre'    , [errorProne:  '2.5.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.8.0', failureaccess: '1.0.1']],
+                ['30.1.1', 'android', [errorProne:  '2.5.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.8.0', failureaccess: '1.0.1']],
                 ['30.1'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
                 ['30.1'  , 'android', [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
                 ['30.0'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
@@ -107,9 +109,9 @@ class GuavaClasspathTest extends Specification {
         ]
     }
 
-    static allGuavaCombinations() {
+    static allGuavaCombinations(boolean without31 = false) {
         def result = []
-        allGuavaVersions().each {
+        allGuavaVersions().findAll {it[0] != '31.0' }.each {
             result.add([it[0], it[1], it[2], 6, 'compileClasspath'])
             result.add([it[0], it[1], it[2], 6, 'runtimeClasspath'])
             result.add([it[0], it[1], it[2], 8, 'compileClasspath'])

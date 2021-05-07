@@ -136,7 +136,9 @@ class GuavaMetadataRule implements ComponentMetadataRule {
                 version = "2.5.2";
             }
         } else {
-            if (guavaVersion.startsWith("30.")) {
+            if (guavaVersion.equals("30.1.1")) {
+                version = "3.8.0";
+            } else if (guavaVersion.startsWith("30.")) {
                 version = "3.5.0";
             } else if (guavaVersion.startsWith("29.")) {
                 version = "2.11.1";
