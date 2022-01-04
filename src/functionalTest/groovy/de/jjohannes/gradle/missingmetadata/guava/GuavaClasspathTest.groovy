@@ -17,12 +17,16 @@ class GuavaClasspathTest extends Specification {
         testFolder.newFile('settings.gradle.kts') << 'rootProject.name = "test-project"'
     }
 
-    String nextGuavaVersion = '31.0'
+    String nextGuavaVersion = '32.0'
 
     static allGuavaVersions() {
         [
-                ['31.0'  , 'jre'    , [errorProne:  '2.6.0', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
-                ['31.0'  , 'android', [errorProne:  '2.6.0', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['32.0'  , 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['32.0'  , 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.0.1', 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.0.1', 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.0'  , 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.0'  , 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
                 ['30.1.1', 'jre'    , [errorProne:  '2.5.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.8.0', failureaccess: '1.0.1']],
                 ['30.1.1', 'android', [errorProne:  '2.5.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.8.0', failureaccess: '1.0.1']],
                 ['30.1'  , 'jre'    , [errorProne:  '2.3.4', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.5.0', failureaccess: '1.0.1']],
@@ -94,13 +98,16 @@ class GuavaClasspathTest extends Specification {
         ]
     }
 
-    static allGuavaCombinations(boolean without31 = false) {
+    static allGuavaCombinations(boolean useVersionForEnv) {
         def result = []
-        allGuavaVersions().findAll {it[0] != '31.0' }.each {
-            result.add([it[0], it[1], it[2], 6, 'compileClasspath'])
-            result.add([it[0], it[1], it[2], 6, 'runtimeClasspath'])
-            result.add([it[0], it[1], it[2], 8, 'compileClasspath'])
-            result.add([it[0], it[1], it[2], 8, 'runtimeClasspath'])
+        allGuavaVersions().each {
+            int majorGuavaVersion = it[0].substring(0, 2) as Integer
+            if (useVersionForEnv || majorGuavaVersion < 31) {
+                result.add([it[0], it[1], it[2], 6, 'compileClasspath'])
+                result.add([it[0], it[1], it[2], 6, 'runtimeClasspath'])
+                result.add([it[0], it[1], it[2], 8, 'compileClasspath'])
+                result.add([it[0], it[1], it[2], 8, 'runtimeClasspath'])
+            }
         }
         return result
     }
@@ -141,7 +148,7 @@ class GuavaClasspathTest extends Specification {
         expectedClasspath(guavaVersion, javaVersion, classpath, dependencyVersions) == buildClasspath()
 
         where:
-        [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations(true)
+        [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations(false)
     }
 
     @Unroll
@@ -185,7 +192,7 @@ class GuavaClasspathTest extends Specification {
         expectedClasspath(guavaVersion, javaVersion, classpath, dependencyVersions) == buildClasspath()
 
         where:
-        [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations()
+        [guavaVersion, versionSuffix, dependencyVersions, javaVersion, classpath] << allGuavaCombinations(true)
     }
 
     Set<String> expectedClasspath(String guavaVersion, int javaVersion, String classpath, Map<String, String> dependencyVersions) {
@@ -207,8 +214,10 @@ class GuavaClasspathTest extends Specification {
             }
             if (dependencyVersions.checker && dependencyVersions.checkerCompat) {
                 if (javaVersion < 8) {
-                    result += "checker-compat-qual-${dependencyVersions.checkerCompat}.jar"
-                    if (guavaVersion == "31.0") {
+                    if (majorGuavaVersion < 32) {
+                        result += "checker-compat-qual-${dependencyVersions.checkerCompat}.jar"
+                    }
+                    if (majorGuavaVersion > 30) {
                         result += "checker-qual-${dependencyVersions.checker}.jar"
                     }
                 } else {
@@ -231,7 +240,7 @@ class GuavaClasspathTest extends Specification {
         gradleRunnerFor(args as List).build()
     }
 
-    GradleRunner gradleRunnerFor(List<String>  args) {
+    GradleRunner gradleRunnerFor(List<String> args) {
         GradleRunner.create()
                 .forwardOutput()
                 .withPluginClasspath()
