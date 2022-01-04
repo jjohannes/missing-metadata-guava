@@ -4,15 +4,22 @@ For more background, have a look at [this blog post](https://blog.gradle.org/gua
 
 ## How to use the plugin
 
-Apply the plugin in your Gradle project:
+Add this plugin dependency to the build file of your [convention plugin](https://docs.gradle.org/release-nightly/samples/sample_convention_plugins.html) build
+(e.g. `build-logic/build.gradle(.kts)` or `buildSrc/build.gradle(.kts)`).
 
 ```
-plugins {
-  id("de.jjohannes.missing-metadata-guava") version "0.4"
+dependencies {
+    implementation("de.jjohannes.gradle:missing-metadata-guava:0.5")
 }
 ```
 
-If you have a multi-project, it is recommended to use a [convention plugin](https://docs.gradle.org/release-nightly/samples/sample_convention_plugins.html) to make sure the plugin is applied to all subprojects that may depend on Guava.
+Apply the plugin in a convention plugin you use in all your Java/Android/JVM Gradle (sub)projects:
+
+```
+plugins {
+  id("de.jjohannes.missing-metadata-guava")
+}
+```
 
 There is no further configuration required.
 

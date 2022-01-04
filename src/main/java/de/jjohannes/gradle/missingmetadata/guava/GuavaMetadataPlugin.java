@@ -1,9 +1,11 @@
 package de.jjohannes.gradle.missingmetadata.guava;
 
+import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 @SuppressWarnings("unused")
+@NonNullApi
 abstract public class GuavaMetadataPlugin implements Plugin<Project> {
 
     @Override
