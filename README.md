@@ -42,23 +42,24 @@ To verify that this plugin has the desired effect, you may want to check which J
 Note that the dependency report alone can be a bit confusing, as it shows the Guava "version strings" that contain the suffix "-jre" or "-android".
 With this plugin however, the selected version is independent of the actual Guava variant (jar) that gets selected in the end.
 
-This except form `gradle dependencyInsight --dependency guava` for example, shows that the JRE (standard-jvm) variant of Guava was selected – `rg.gradle.jvm.environment = standard-jvm` – although the version String is _28.1-android_.
+This `gradle dependencyInsight --configuration runtimeClasspath --dependency :guava:` report, for example, shows that the JRE (standard-jvm) variant of Guava was selected –
+`org.gradle.jvm.environment = standard-jvm` – although the version String is _28.1-android_.
 
 ```
 com.google.guava:guava:28.1-android
-   variant "standardJvmCompile" [
+   variant "standardJvmRuntime" [
       org.gradle.jvm.version         = 8 (compatible with: 11)
       org.gradle.jvm.environment     = standard-jvm
       org.gradle.status              = release (not requested)
-      org.gradle.usage               = java-api
-      org.gradle.libraryelements     = jar (compatible with: classes)
+      org.gradle.usage               = java-runtime
+      org.gradle.libraryelements     = jar
       org.gradle.category            = library
 
       Requested attributes not found in the selected variant:
          org.gradle.dependency.bundling = external
    ]
    Selection reasons:
-      - By conflict resolution : between versions 28.1-android, 26.0-android and 28.0-android
+      - By conflict resolution : between versions 28.1-android, 28.0-jre and 26.0-android
 ```
 
 This will put `guava-28.1-jre.jar` on the compile classpath, which the report does not show.
