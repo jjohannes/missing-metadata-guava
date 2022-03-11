@@ -106,7 +106,7 @@ class GuavaMetadataRule implements ComponentMetadataRule {
                 a.attribute(TARGET_JVM_VERSION_ATTRIBUTE, otherJdkVersion);
                 a.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, otherEnv);
             });
-            if (majorVersion >= 26 || "25.1".equals(version)) {
+            if ((majorVersion >= 26 && majorVersion < 31) || version.startsWith("31.0") || "25.1".equals(version)) {
                 variant.withDependencies(dependencies -> {
                     if (majorVersion < 31 || isAndroidVariantVersion) {
                         dependencies.removeIf(d -> "org.checkerframework".equals(d.getGroup()));

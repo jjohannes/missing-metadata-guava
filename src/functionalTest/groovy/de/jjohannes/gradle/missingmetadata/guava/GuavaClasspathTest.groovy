@@ -21,8 +21,10 @@ class GuavaClasspathTest extends Specification {
 
     static allGuavaVersions() {
         [
-                ['32.0'  , 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
-                ['32.0'  , 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['32.0'  , 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['32.0'  , 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.1'  , 'jre'    , [errorProne:  '2.11.0', j2objc: '1.3', jsr305: '3.0.2', checker: '3.12.0', failureaccess: '1.0.1']],
+                ['31.1'  , 'android', [errorProne:  '2.11.0', j2objc: '1.3', jsr305: '3.0.2', checker: '3.12.0', failureaccess: '1.0.1']],
                 ['31.0.1', 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
                 ['31.0.1', 'android', [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
                 ['31.0'  , 'jre'    , [errorProne:  '2.7.1', j2objc: '1.3', jsr305: '3.0.2', checkerCompat:  '2.5.5', checker: '3.12.0', failureaccess: '1.0.1']],
@@ -214,9 +216,7 @@ class GuavaClasspathTest extends Specification {
             }
             if (dependencyVersions.checker && dependencyVersions.checkerCompat) {
                 if (javaVersion < 8) {
-                    if (majorGuavaVersion < 32) {
-                        result += "checker-compat-qual-${dependencyVersions.checkerCompat}.jar"
-                    }
+                    result += "checker-compat-qual-${dependencyVersions.checkerCompat}.jar"
                     if (majorGuavaVersion > 30) {
                         result += "checker-qual-${dependencyVersions.checker}.jar"
                     }
