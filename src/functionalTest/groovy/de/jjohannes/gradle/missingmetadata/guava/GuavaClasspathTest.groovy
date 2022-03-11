@@ -119,7 +119,7 @@ class GuavaClasspathTest extends Specification {
         given:
         testFolder.newFile("build.gradle.kts") << """
             plugins {
-                `java-library`
+                id("java-library")
                 id("de.jjohannes.missing-metadata-guava")
             }
 

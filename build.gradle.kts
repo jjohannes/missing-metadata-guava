@@ -2,7 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("maven-publish")
     id("groovy")
-    id("com.gradle.plugin-publish") version "0.18.0"
+    id("com.gradle.plugin-publish") version "0.20.0"
 }
 
 repositories {
@@ -28,7 +28,6 @@ tasks.check {
 }
 
 dependencies {
-    implementation(gradleApi())
     "functionalTestImplementation"("org.spockframework:spock-core:1.2-groovy-2.5")
 }
 
