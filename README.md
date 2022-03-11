@@ -9,7 +9,7 @@ Add this plugin dependency to the build file of your [convention plugin](https:/
 
 ```
 dependencies {
-    implementation("de.jjohannes.gradle:missing-metadata-guava:0.5")
+    implementation("de.jjohannes.gradle:missing-metadata-guava:31.1")
 }
 ```
 
@@ -25,7 +25,7 @@ There is no further configuration required.
 
 ## Supported Guava releases
 
-The latest release of this plugin can deal with all Guava releases up to **31.0.1**.
+The latest release of this plugin can deal with all Guava releases up to **31.1**.
 
 ## Effect of the plugin
 
