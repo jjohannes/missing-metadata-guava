@@ -10,7 +10,7 @@ import static de.jjohannes.gradle.missingmetadata.guava.GuavaCapabilities.*;
 import static org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE;
 
 @CacheableRule
-class GuavaMetadataRule implements ComponentMetadataRule {
+abstract public class GuavaMetadataRule implements ComponentMetadataRule {
     private final static Attribute<String> TARGET_JVM_ENVIRONMENT_ATTRIBUTE =
             Attribute.of("org.gradle.jvm.environment", String.class);
 
