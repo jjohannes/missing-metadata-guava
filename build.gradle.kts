@@ -10,7 +10,7 @@ repositories {
 }
 
 group = "de.jjohannes.gradle"
-version = "31.1"
+version = "31.1.1"
 
 java {
     targetCompatibility = JavaVersion.VERSION_1_8

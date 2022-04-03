@@ -9,7 +9,7 @@ Add this plugin dependency to the build file of your [convention plugin](https:/
 
 ```
 dependencies {
-    implementation("de.jjohannes.gradle:missing-metadata-guava:31.1")
+    implementation("de.jjohannes.gradle:missing-metadata-guava:31.1.1")
 }
 ```
 
