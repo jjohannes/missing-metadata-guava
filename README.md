@@ -1,3 +1,6 @@
+> **⚠️ The functionality of this plugin has been integrated into 'org.gradlex.java-ecosystem-capabilities'**  
+> Preferably use the [org.gradlex.java-ecosystem-capabilities](https://github.com/jjohannes/java-ecosystem-capabilities) plugin in your build.
+
 A Gradle plugin that adds additional metadata to all releases of the [Google Guava](https://github.com/google/guava) library.
 
 For more background, have a look at [this blog post](https://blog.gradle.org/guava).
